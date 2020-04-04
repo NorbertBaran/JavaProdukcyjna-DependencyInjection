@@ -1,21 +1,17 @@
 package uj.jwzp.hellodi.logic.savers;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import uj.jwzp.hellodi.model.FileName;
 import uj.jwzp.hellodi.model.Movie;
-
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
-@Component("xmlMovieSaver")
-public class XmlMovieSaver implements MovieSaver {
+@Component("jsonMovieSaver")
+public class JsonMovieSaver implements MovieSaver {
 
     //@Inject
     //@Named("XmlFileName")
@@ -23,9 +19,9 @@ public class XmlMovieSaver implements MovieSaver {
     @Autowired
     FileName fileName;
 
-    public XmlMovieSaver(){}
+    public JsonMovieSaver(){}
 
-    public XmlMovieSaver(FileName fileName){
+    public JsonMovieSaver(FileName fileName){
         this.fileName=fileName;
     }
 
@@ -35,21 +31,24 @@ public class XmlMovieSaver implements MovieSaver {
         String fileName=this.fileName.toString();
 
         Writer writer = new FileWriter(fileName);
-        writer.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n").append("<movies>\n");
+        writer.append("[\n");
         for (Movie movie: movies) {
             writer.append(movieEntry(movie));
+            if(!movie.toString().equals(movies.get(movies.size()-1).toString()))
+                writer.append(",");
+            writer.append("\n");
         }
-        writer.append("</movies>\n");
+        writer.append("]\n");
         writer.close();
     }
 
     private String movieEntry(Movie movie) {
-        StringBuilder result = new StringBuilder("  <movie>\n");
+        StringBuilder result = new StringBuilder("  {\n");
         result
-                .append("    <title>" + movie.getTitle() + "</title>\n")
-                .append("    <director>" + movie.getDirector() + "</director>\n")
-                .append("    <year>" + movie.getYear() + "</year>\n")
-                .append("  </movie>\n");
+                .append("    \"title\": \"" + movie.getTitle() + "\",\n")
+                .append("    \"director\": \"" + movie.getDirector() + "\",\n")
+                .append("    \"year\": \"" + movie.getYear() + "\"\n")
+                .append("  }");
         return result.toString();
     }
 }

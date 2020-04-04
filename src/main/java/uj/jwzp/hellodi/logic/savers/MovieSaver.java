@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface MovieSaver {
 
-    void save(List<Movie> movies, String fileName) throws IOException;
+    void save(List<Movie> movies) throws IOException;
 }
